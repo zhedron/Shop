@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import zhedron.shop.dto.ProductDTO;
+import zhedron.shop.exceptions.ProductNotExistException;
 import zhedron.shop.models.Product;
 import zhedron.shop.services.ProductService;
 
@@ -54,18 +55,35 @@ public class ProductController {
 
     @GetMapping("/{id}/image")
     public ResponseEntity<byte[]> getImage (@PathVariable long id) throws IOException {
-        ProductDTO productDTO = service.findById(id);
+        try {
+            ProductDTO productDTO = service.findById(id);
 
-        if (productDTO != null) {
-            File file = new File(BASE_DIRECTORY + productDTO.getImageUrl());
+            if (productDTO != null) {
+                File file = new File(BASE_DIRECTORY + productDTO.getImageUrl());
 
-            byte[] image = Files.readAllBytes(file.toPath());
+                byte[] image = Files.readAllBytes(file.toPath());
 
-            MediaType mediaType = MediaType.parseMediaType(productDTO.getContentType());
+                MediaType mediaType = MediaType.parseMediaType(productDTO.getContentType());
 
-            return ResponseEntity.status(HttpStatus.ACCEPTED).contentType(mediaType).body(image);
+                return ResponseEntity.status(HttpStatus.ACCEPTED).contentType(mediaType).body(image);
+            }
+        } catch (ProductNotExistException e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        return ResponseEntity.notFound().build();
+        return null;
+    }
+
+    @DeleteMapping ("/deleteproduct/{id}")
+    public ResponseEntity<?> delete (@PathVariable long id) {
+        try {
+            service.delete(id);
+
+            return ResponseEntity.ok(HttpStatus.ACCEPTED);
+        } catch (ProductNotExistException e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }

@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import zhedron.shop.dto.ProductDTO;
 import zhedron.shop.dto.UserDTO;
+import zhedron.shop.exceptions.ProductNotExistException;
+import zhedron.shop.exceptions.UserBalanceException;
+import zhedron.shop.exceptions.UserNotExistException;
 import zhedron.shop.mappers.ProductMapper;
 import zhedron.shop.mappers.UserMapper;
 import zhedron.shop.models.Basket;
@@ -34,8 +37,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(long id) {
-        repository.deleteById(id);
+    public void delete(long id) throws UserNotExistException {
+        User user = repository.deleteById(id);
+
+        if (user == null) {
+            throw new UserNotExistException("User not found with id: " + id);
+        }
     }
 
     @Override
@@ -46,14 +53,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO findById (long id) {
-        User user = repository.findById(id).orElse(null);
+    public UserDTO findById (long id) throws UserNotExistException {
+        User user = repository.findById(id).orElseThrow(() -> new UserNotExistException("User not found with id: " + id));
 
         return mapper.toDTO(user);
     }
 
     @Override
-    public void addProductToUser (long id, long userId) throws Exception {
+    public void addProductToUser (long id, long userId) throws UserNotExistException, UserBalanceException, ProductNotExistException {
         ProductDTO productDTO = service.findById(id);
 
         Product product = productMapper.toEntity(productDTO);
@@ -64,7 +71,7 @@ public class UserServiceImpl implements UserService {
 
         if (product != null && user != null) {
             if (user.getBalance() < product.getPrice()) {
-                throw new Exception("Not money");
+                throw new UserBalanceException("Not enough balance to add product");
             }
 
             product.setIsBuy(true);
@@ -78,7 +85,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addBasketToUser (long id, long productId) {
+    public void addBasketToUser (long id, long productId) throws UserNotExistException, ProductNotExistException {
         ProductDTO productDTO = service.findById(productId);
 
         Product product = productMapper.toEntity(productDTO);
@@ -100,6 +107,19 @@ public class UserServiceImpl implements UserService {
 
 
             log.info("Saved: {}, {}", basket, user);
+        }
+    }
+
+    @Override
+    public void update (long id, User updatedUser) throws UserNotExistException {
+        User user = repository.findById(id).orElseThrow(() -> new UserNotExistException("User not found with id" + id));
+
+        if (user != null) {
+            user.setName(updatedUser.getName());
+            user.setSurname(updatedUser.getSurname());
+            user.setPassword(updatedUser.getPassword());
+
+            repository.save(user);
         }
     }
 }

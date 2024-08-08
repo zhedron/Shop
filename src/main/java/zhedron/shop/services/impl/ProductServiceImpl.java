@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import zhedron.shop.dto.ProductDTO;
+import zhedron.shop.exceptions.ProductNotExistException;
 import zhedron.shop.mappers.ProductMapper;
 import zhedron.shop.models.Product;
 import zhedron.shop.repository.ProductRepository;
@@ -20,16 +21,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void save (Product product) {
-        /*User user = service.findById(id);
-
-        if (user != null) {
-            repository.save(product);
-       *//*     user.getProducts().add(product);
-            service.save(user);*//*
-
-
-        }*/
-
         repository.save(product);
         log.info("Created product: {}", product);
     }
@@ -42,9 +33,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO findById (long id) {
-        Product product = repository.findById(id).orElse(null);
+    public ProductDTO findById (long id) throws ProductNotExistException {
+        Product product = repository.findById(id).orElseThrow(() -> new ProductNotExistException ("Not found product with id " + id));
 
         return mapper.toDTO(product);
+    }
+
+    @Override
+    public void delete (long id) throws ProductNotExistException {
+        Product product = repository.deleteById(id);
+
+        if (product == null) {
+            throw new ProductNotExistException ("Not found product with id " + id);
+        }
     }
 }
