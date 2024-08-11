@@ -79,6 +79,11 @@ public class UserServiceImpl implements UserService {
                 throw new UserBalanceException("Not enough balance to add product");
             }
 
+            double price = product.getPrice();
+            double balance = user.getBalance() - price;
+
+            user.setBalance(balance);
+
             product.setIsBuy(true);
             service.save(product);
 
