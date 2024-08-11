@@ -2,9 +2,11 @@ package zhedron.shop.services.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import zhedron.shop.dto.ProductDTO;
 import zhedron.shop.dto.UserDTO;
+import zhedron.shop.enums.Role;
 import zhedron.shop.exceptions.ProductNotExistException;
 import zhedron.shop.exceptions.UserBalanceException;
 import zhedron.shop.exceptions.UserNotExistException;
@@ -28,9 +30,12 @@ public class UserServiceImpl implements UserService {
     private final ProductMapper productMapper;
     private final ProductService service;
     private final BasketService basketService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void save(User user) {
+        user.setRole(Role.ROLE_ADMIN);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         repository.save(user);
 
         log.info("Created user: {}", user);
@@ -112,7 +117,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update (long id, User updatedUser) throws UserNotExistException {
-        User user = repository.findById(id).orElseThrow(() -> new UserNotExistException("User not found with id" + id));
+        User user = repository.findById(id).orElseThrow(() -> new UserNotExistException("User not found with id: " + id));
 
         if (user != null) {
             user.setName(updatedUser.getName());

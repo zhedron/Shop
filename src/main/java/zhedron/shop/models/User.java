@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import zhedron.shop.enums.Role;
 
 import java.util.List;
 
@@ -22,6 +23,9 @@ public class User {
     private String name;
 
     @Column
+    private String email;
+
+    @Column
     private String surname;
 
     @Column
@@ -29,6 +33,10 @@ public class User {
 
     @Column
     private double balance;
+
+    @Enumerated(EnumType.STRING)
+    @Column
+    private Role role;
 
     @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn
