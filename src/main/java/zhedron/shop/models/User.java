@@ -1,11 +1,13 @@
 package zhedron.shop.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import zhedron.shop.enums.Role;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -23,6 +25,7 @@ public class User {
     private String name;
 
     @Column
+    @Email (message = "Indicate your email")
     private String email;
 
     @Column
@@ -45,4 +48,11 @@ public class User {
     @OneToMany
     @JoinColumn
     private List<Basket> baskets;
+
+    @Column
+    private LocalDateTime createdAt;
+
+    {
+        this.createdAt = LocalDateTime.now();
+    }
 }

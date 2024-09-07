@@ -1,7 +1,9 @@
 package zhedron.shop.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import zhedron.shop.dto.UserDTO;
 import zhedron.shop.exceptions.UserNotExistException;
@@ -20,7 +22,11 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public String create (@RequestBody User user) {
+    public String create (@Valid @RequestBody User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return bindingResult.getFieldError().getDefaultMessage();
+        }
+
         service.save(user);
 
         return "User created";
