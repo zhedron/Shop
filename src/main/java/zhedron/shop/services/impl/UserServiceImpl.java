@@ -19,6 +19,7 @@ import zhedron.shop.repository.UserRepository;
 import zhedron.shop.services.BasketService;
 import zhedron.shop.services.ProductService;
 import zhedron.shop.services.UserService;
+
 import java.util.List;
 
 @Service
@@ -34,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(User user) {
-        user.setRole(Role.ROLE_ADMIN);
+        user.setRole(Role.ROLE_USER);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         repository.save(user);
 
@@ -43,11 +44,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(long id) throws UserNotExistException {
-        User user = repository.deleteById(id);
-
-        if (user == null) {
-            throw new UserNotExistException("User not found with id: " + id);
+        if (!repository.existsById(id)) {
+            throw new UserNotExistException("User not found " + id);
         }
+
+        repository.deleteById(id);
     }
 
     @Override
@@ -65,12 +66,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addProductToUser (long id, long userId) throws UserNotExistException, UserBalanceException, ProductNotExistException {
-        ProductDTO productDTO = service.findById(id);
+    public User findByEmail (String email) throws UserNotExistException {
+        return repository.findByEmail(email).orElseThrow(() -> new UserNotExistException("Not found user with email" + email));
+    }
+
+    @Override
+    public void addProductToUser (long productId, long userId) throws UserNotExistException, UserBalanceException, ProductNotExistException {
+        ProductDTO productDTO = service.findById(productId);
 
         Product product = productMapper.toEntity(productDTO);
 
-        UserDTO userDTO = findById(id);
+        UserDTO userDTO = findById(userId);
 
         User user = mapper.toEntity(userDTO);
 
@@ -95,12 +101,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addBasketToUser (long id, long productId) throws UserNotExistException, ProductNotExistException {
+    public void addBasketToUser (long userId, long productId) throws UserNotExistException, ProductNotExistException {
         ProductDTO productDTO = service.findById(productId);
 
         Product product = productMapper.toEntity(productDTO);
 
-        UserDTO userDTO = findById(id);
+        UserDTO userDTO = findById(userId);
 
         User user = mapper.toEntity(userDTO);
 
@@ -116,7 +122,7 @@ public class UserServiceImpl implements UserService {
             repository.save(user);
 
 
-            log.info("Saved: {}, {}", basket, user);
+            log.info("Saved basket: {}, user: {}", basket, user);
         }
     }
 
@@ -127,8 +133,18 @@ public class UserServiceImpl implements UserService {
         if (user != null) {
             user.setName(updatedUser.getName());
             user.setSurname(updatedUser.getSurname());
-            user.setPassword(updatedUser.getPassword());
+            user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
 
+            repository.save(user);
+        }
+    }
+
+    @Override
+    public void update (long userId, Role role) throws UserNotExistException {
+        User user = repository.findById(userId).orElseThrow(() -> new UserNotExistException("User not found with id: " + userId));
+
+        if (user != null) {
+            user.setRole(role);
             repository.save(user);
         }
     }

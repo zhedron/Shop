@@ -25,7 +25,10 @@ public class ProductController {
     private final String BASE_DIRECTORY = "images/";
 
     @PostMapping("/createproduct")
-    public ResponseEntity<?> create(@RequestPart Product dto, @RequestPart MultipartFile file) throws IOException {
+    public ResponseEntity<?> create(@RequestPart Product product, @RequestPart MultipartFile file) throws IOException {
+        System.out.println(file.getOriginalFilename());
+        System.out.println(file.getContentType());
+
         File dir = new File(BASE_DIRECTORY);
 
         if (!dir.exists()) {
@@ -40,10 +43,10 @@ public class ProductController {
 
         file.transferTo(image.toPath());
 
-        dto.setImageUrl(url);
-        dto.setContentType(file.getContentType());
+        product.setImageUrl(url);
+        product.setContentType(file.getContentType());
 
-        service.save(dto);
+        service.save(product);
 
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
@@ -73,17 +76,5 @@ public class ProductController {
         }
 
         return null;
-    }
-
-    @DeleteMapping ("/deleteproduct/{id}")
-    public ResponseEntity<?> delete (@PathVariable long id) {
-        try {
-            service.delete(id);
-
-            return ResponseEntity.ok(HttpStatus.ACCEPTED);
-        } catch (ProductNotExistException e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
     }
 }

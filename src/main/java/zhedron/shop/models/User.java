@@ -43,5 +43,6 @@ public class User {
     private List<Product> products;
 
     @OneToMany
+    @JoinColumn
     private List<Basket> baskets;
 }

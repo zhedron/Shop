@@ -1,6 +1,7 @@
 package zhedron.shop.services;
 
 import zhedron.shop.dto.UserDTO;
+import zhedron.shop.enums.Role;
 import zhedron.shop.exceptions.ProductNotExistException;
 import zhedron.shop.exceptions.UserBalanceException;
 import zhedron.shop.exceptions.UserNotExistException;
@@ -20,7 +21,11 @@ public interface UserService {
 
     void update (long id, User user) throws UserNotExistException;
 
-    void addProductToUser (long id, long userId) throws UserNotExistException, UserBalanceException, ProductNotExistException;
+    User findByEmail (String email) throws UserNotExistException;
+
+    void addProductToUser (long productId, long userId) throws UserNotExistException, UserBalanceException, ProductNotExistException;
 
     void addBasketToUser (long id, long productId) throws UserNotExistException, ProductNotExistException;
+
+    void update (long userId, Role role) throws UserNotExistException;
 }
