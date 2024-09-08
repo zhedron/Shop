@@ -58,7 +58,7 @@ public class SpringSecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/api/create", "/api/products", "/api/*/image", "/login", "/refreshtoken", "/api/user/*").permitAll()
+                    auth.requestMatchers("/api/create", "/api/products", "/api/*/image", "/login", "/refreshtoken", "/api/user/*", "/api/addbasket/**", "/api/addproduct/**").permitAll()
                             .requestMatchers("/api/admin/**").hasRole("ADMIN");
                 })
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

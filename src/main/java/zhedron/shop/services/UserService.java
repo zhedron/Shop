@@ -15,7 +15,7 @@ public interface UserService {
 
     void delete (long id) throws UserNotExistException;
 
-    List<UserDTO> findAll ();
+    List<User> findAll ();
 
     UserDTO findById (long id) throws UserNotExistException;
 

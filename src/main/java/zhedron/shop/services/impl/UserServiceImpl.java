@@ -52,10 +52,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> findAll () {
-        List<User> users = repository.findAll();
-
-        return mapper.toDTOList(users);
+    public List<User> findAll () {
+        return repository.findAll();
     }
 
     @Override
@@ -81,6 +79,10 @@ public class UserServiceImpl implements UserService {
         User user = mapper.toEntity(userDTO);
 
         if (product != null && user != null) {
+            User originalUser = repository.findById(userId).orElseThrow(() -> new UserNotExistException("User not found with id: " + userId));
+
+            user.setPassword(passwordEncoder.encode(originalUser.getPassword()));
+
             if (user.getBalance() < product.getPrice()) {
                 throw new UserBalanceException("Not enough balance to add product");
             }
@@ -110,7 +112,13 @@ public class UserServiceImpl implements UserService {
 
         User user = mapper.toEntity(userDTO);
 
+
+
         if (user != null && productDTO != null) {
+            User originalUser = repository.findById(userId).orElseThrow(() -> new UserNotExistException("User not found with id: " + userId));
+
+            user.setPassword(passwordEncoder.encode(originalUser.getPassword()));
+
             Basket basket = new Basket();
 
             basket.setProduct(product);
