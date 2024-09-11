@@ -47,4 +47,15 @@ public class ProductServiceImpl implements ProductService {
             throw new ProductNotExistException ("Not found product with id " + id);
         }
     }
+
+    @Override
+    public List<ProductDTO> findByName (String name) throws ProductNotExistException {
+        List<Product> products = repository.findProductsByName(name);
+
+        if (products == null) {
+            throw new ProductNotExistException ("Product not found with name " + name);
+        }
+
+        return mapper.toDTOList(products);
+    }
 }

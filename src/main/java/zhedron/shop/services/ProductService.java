@@ -14,4 +14,6 @@ public interface ProductService {
     ProductDTO findById (long id) throws ProductNotExistException;
 
     void delete (long id) throws ProductNotExistException;
+
+    List<ProductDTO> findByName (String name) throws ProductNotExistException;
 }

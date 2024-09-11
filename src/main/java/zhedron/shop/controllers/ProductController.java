@@ -47,4 +47,9 @@ public class ProductController {
 
         return null;
     }
+
+    @GetMapping ("/search")
+    public List<ProductDTO> search(@RequestParam String name) throws ProductNotExistException {
+        return service.findByName(name);
+    }
 }
