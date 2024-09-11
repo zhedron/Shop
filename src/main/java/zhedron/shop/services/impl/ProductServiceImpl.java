@@ -52,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDTO> findByName (String name) throws ProductNotExistException {
         List<Product> products = repository.findProductsByName(name);
 
-        if (products == null) {
+        if (products == null || products.isEmpty()) {
             throw new ProductNotExistException ("Product not found with name " + name);
         }
 
