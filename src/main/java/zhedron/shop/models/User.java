@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ public class User {
 
     @Column
     @NotBlank (message = "Name must not be empty")
+    @Size (min = 3, max = 15, message = "Name should be min 3 words or max 20 words")
     private String name;
 
     @Column
@@ -35,6 +37,7 @@ public class User {
 
     @Column
     @NotBlank (message = "Surname must not be empty")
+    @Size (min = 5, max = 25, message = "Surname should be min 5 words or max 25 words")
     private String surname;
 
     @Column
