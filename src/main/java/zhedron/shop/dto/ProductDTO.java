@@ -16,7 +16,7 @@ public class ProductDTO {
 
     private double price;
 
-    private boolean isBuy;
+    private Boolean isBuy;
 
     private String imageUrl;
 
