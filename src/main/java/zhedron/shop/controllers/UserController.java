@@ -11,6 +11,9 @@ import zhedron.shop.exceptions.UserNotExistException;
 import zhedron.shop.models.User;
 import zhedron.shop.services.UserService;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api")
 public class UserController {
