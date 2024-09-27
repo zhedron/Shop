@@ -112,8 +112,6 @@ public class UserServiceImpl implements UserService {
 
         User user = mapper.toEntity(userDTO);
 
-
-
         if (user != null && productDTO != null) {
             User originalUser = repository.findById(userId).orElseThrow(() -> new UserNotExistException("User not found with id: " + userId));
 
@@ -128,7 +126,6 @@ public class UserServiceImpl implements UserService {
             user.getBaskets().add(basket);
 
             repository.save(user);
-
 
             log.info("Saved basket: {}, user: {}", basket, user);
         }

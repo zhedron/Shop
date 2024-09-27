@@ -82,6 +82,14 @@ public class AdminController {
 
     @PostMapping("/createproduct")
     public ResponseEntity<?> create(@RequestPart Product product, @RequestPart MultipartFile file) throws IOException {
+        if (file.getContentType().equals("image/gif")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("should be not upload gif");
+        }
+
+        if (file.getContentType().equals("video/mp4")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("should be not upload mp4");
+        }
+
         System.out.println(file.getOriginalFilename());
         System.out.println(file.getContentType());
 
