@@ -30,7 +30,7 @@ public class User {
     @Size (min = 3, max = 15, message = "Name should be min 3 words or max 20 words")
     private String name;
 
-    @Column
+    @Column (unique = true)
     @Email (message = "Indicate your email")
     @NotBlank (message = "Email must not be empty")
     private String email;
