@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import zhedron.shop.dto.UserDTO;
+import zhedron.shop.exceptions.EmailExistException;
 import zhedron.shop.exceptions.ProductNotExistException;
 import zhedron.shop.exceptions.UserNotExistException;
 import zhedron.shop.models.User;
@@ -21,7 +22,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public String create (@Valid @RequestBody User user, BindingResult bindingResult) {
+    public String create (@Valid @RequestBody User user, BindingResult bindingResult) throws EmailExistException {
         if (bindingResult.hasErrors()) {
             return bindingResult.getFieldError().getDefaultMessage();
         }

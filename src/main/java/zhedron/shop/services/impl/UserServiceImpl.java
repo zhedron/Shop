@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import zhedron.shop.dto.ProductDTO;
 import zhedron.shop.dto.UserDTO;
 import zhedron.shop.enums.Role;
+import zhedron.shop.exceptions.EmailExistException;
 import zhedron.shop.exceptions.ProductNotExistException;
 import zhedron.shop.exceptions.UserBalanceException;
 import zhedron.shop.exceptions.UserNotExistException;
@@ -34,7 +35,11 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void save(User user) {
+    public void save(User user) throws EmailExistException {
+        if (repository.existsByEmail(user.getEmail())) {
+            throw new EmailExistException("Email exist, use another email");
+        }
+
         user.setRole(Role.ROLE_ADMIN);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         repository.save(user);

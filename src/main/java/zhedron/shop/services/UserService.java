@@ -2,6 +2,7 @@ package zhedron.shop.services;
 
 import zhedron.shop.dto.UserDTO;
 import zhedron.shop.enums.Role;
+import zhedron.shop.exceptions.EmailExistException;
 import zhedron.shop.exceptions.ProductNotExistException;
 import zhedron.shop.exceptions.UserBalanceException;
 import zhedron.shop.exceptions.UserNotExistException;
@@ -11,7 +12,7 @@ import java.util.List;
 
 
 public interface UserService {
-    void save (User userDTO);
+    void save (User user) throws EmailExistException;
 
     void delete (long id) throws UserNotExistException;
 
