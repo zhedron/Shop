@@ -12,7 +12,7 @@ import java.util.List;
 
 
 public interface UserService {
-    void save (User user) throws EmailExistException;
+    User save (User user) throws EmailExistException;
 
     void delete (long id) throws UserNotExistException;
 
@@ -26,7 +26,7 @@ public interface UserService {
 
     void addProductToUser (long productId, long userId) throws UserNotExistException, UserBalanceException, ProductNotExistException;
 
-    void addBasketToUser (long id, long productId) throws UserNotExistException, ProductNotExistException;
+    void addBasketToUser (long userId, long productId) throws UserNotExistException, ProductNotExistException;
 
     void update (long userId, Role role) throws UserNotExistException;
 }

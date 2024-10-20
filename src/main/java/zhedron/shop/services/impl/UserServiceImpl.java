@@ -35,16 +35,17 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void save(User user) throws EmailExistException {
+    public User save(User user) throws EmailExistException {
         if (repository.existsByEmail(user.getEmail())) {
             throw new EmailExistException("Email exist, use another email");
         }
 
         user.setRole(Role.ROLE_ADMIN);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        repository.save(user);
 
         log.info("Created user: {}", user);
+
+       return repository.save(user);
     }
 
     @Override
@@ -143,6 +144,7 @@ public class UserServiceImpl implements UserService {
         if (user != null) {
             user.setName(updatedUser.getName());
             user.setSurname(updatedUser.getSurname());
+            user.setEmail(updatedUser.getEmail());
             user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
 
             repository.save(user);

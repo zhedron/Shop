@@ -22,14 +22,14 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public String create (@Valid @RequestBody User user, BindingResult bindingResult) throws EmailExistException {
+    public ResponseEntity<String> create (@Valid @RequestBody User user, BindingResult bindingResult) throws EmailExistException {
         if (bindingResult.hasErrors()) {
-            return bindingResult.getFieldError().getDefaultMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getFieldError().getDefaultMessage());
         }
 
         service.save(user);
 
-        return "User created";
+        return ResponseEntity.status(HttpStatus.CREATED).body("User created");
     }
 
     @GetMapping("/user/{id}")
